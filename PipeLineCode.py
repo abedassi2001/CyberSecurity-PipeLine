@@ -1,73 +1,59 @@
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.ensemble import IsolationForest
 
 # Load data
 df = pd.read_csv('phishing.csv')
 
-# 1. Class distribution
-plt.figure(figsize=(6,4))
-sns.countplot(x='class', data=df)
-plt.title('Class Distribution: Legitimate (1) vs Phishing (-1)')
-plt.show()
-
-# 2. Feature presence rate (proportion of 1s)
-feature_cols = df.columns.drop(['class', 'Index'])
-feature_means = df[feature_cols].mean().sort_values(ascending=False)
-
-plt.figure(figsize=(12,6))
-feature_means.plot(kind='bar')
-plt.title('Feature Presence Rate (Proportion of 1s per feature)')
-plt.ylabel('Proportion of 1s')
-plt.show()
-
-# 3. Feature distribution by class (example for a few features)
-features_to_plot = ['UsingIP', 'LongURL', 'HTTPS']
-for feature in features_to_plot:
-    plt.figure(figsize=(6,4))
-    sns.countplot(x=feature, hue='class', data=df)
-    plt.title(f'Distribution of {feature} by Class')
-    plt.show()
-
-# 4. Remove highly correlated features
+# Remove correlated features
 features_to_remove = ['Favicon', 'UsingPopupWindow']
-X = df.drop(columns=['class', 'Index'] + features_to_remove)
+df = df.drop(columns=features_to_remove)
+
+# Separate features and target
+X = df.drop(columns=['class', 'Index'])
 y = df['class']
 
-# 5. Outlier detection using Isolation Forest
+# Optional: remove outliers using Isolation Forest (contamination=0.01)
+from sklearn.ensemble import IsolationForest
 iso = IsolationForest(contamination=0.01, random_state=42)
 outlier_flags = iso.fit_predict(X)
+mask_inliers = outlier_flags == 1
+X, y = X[mask_inliers], y[mask_inliers]
 
-# Add outlier label: -1 = outlier, 1 = inlier
-df['outlier'] = outlier_flags
+# Train-test split (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
 
-# Remove outliers
-df_no_outliers = df[df['outlier'] == 1].drop(columns=['outlier'])
-print(f"\nOutliers removed: {df.shape[0] - df_no_outliers.shape[0]}")
-print(f"Remaining samples: {df_no_outliers.shape[0]}")
+# Train Random Forest
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
 
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-import numpy as np
+# Predict on test set
+y_pred = rf.predict(X_test)
 
-# Use cleaned data without 'class', 'Index', 'Favicon', and 'UsingPopupWindow'
-X = df.drop(columns=['class', 'Index', 'Favicon', 'UsingPopupWindow'])
+# Evaluate
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
-# Apply KMeans clustering (2 clusters expected: phishing vs legit)
-kmeans = KMeans(n_clusters=2, random_state=42)
-clusters = kmeans.fit_predict(X)
+# Confusion Matrix Plot
+cm = confusion_matrix(y_test, y_pred, labels=rf.classes_)
+plt.figure(figsize=(6,5))
+sns.heatmap(cm, annot=True, fmt='d', xticklabels=rf.classes_, yticklabels=rf.classes_, cmap='Blues')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Confusion Matrix')
+plt.show()
 
-# Add cluster label to dataframe
-df['Cluster'] = clusters
+# Feature Importance Plot
+importances = rf.feature_importances_
+indices = importances.argsort()[::-1]
+features = X.columns
 
-# PCA for visualization (reduce to 2D)
-pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X)
-
-plt.figure(figsize=(8,6))
-sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=df['Cluster'], palette='Set2')
-plt.title("KMeans Clustering – Pattern Recognition")
-plt.xlabel("PCA Component 1")
-plt.ylabel("PCA Component 2")
+plt.figure(figsize=(12,6))
+sns.barplot(x=importances[indices], y=features[indices])
+plt.title('Random Forest Feature Importances')
 plt.show()

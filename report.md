@@ -149,3 +149,146 @@ Time series analysis typically involves examining how data changes over time to 
 However, the dataset used in this project does **not include any time-related feature** (e.g., timestamps or collection dates). As a result, a true time series analysis could not be performed.
 
 In future versions of this dataset, the inclusion of time-based attributes would enable deeper insights into the temporal behavior of phishing threats.
+
+### Segmentation Analysis
+
+Segmentation analysis involves dividing the dataset into distinct groups (segments) that exhibit similar behaviors or characteristics. This helps uncover underlying patterns that can inform model design and security insights.
+
+#### 🔍 What features characterize each segment?
+
+Using **KMeans Clustering**, we identified two main segments based on the behavioral features of the websites:
+
+- **Segment 0**: Characterized by features such as `HTTPS = 1`, `UsingIP = -1`, and safer subdomain usage. The majority of websites in this cluster were labeled as **legitimate**.
+  
+- **Segment 1**: This group showed increased usage of IP addresses in URLs, abnormal redirects (`Redirecting// = 1`), and a higher frequency of non-standard ports. A large proportion of the websites here were labeled as **phishing**.
+
+This segmentation reinforces the idea that phishing websites often follow recognizable patterns that differentiate them from legitimate sites.
+
+#### ⏱️ Are there temporal components?
+
+The dataset does **not contain any time-related attributes** (e.g., timestamps or collection dates). Therefore, we were **unable to perform temporal trend analysis** or detect seasonal behaviors in phishing activity.
+
+In future datasets, the addition of time-based information would enable more advanced temporal analysis and monitoring.
+
+#### 💡 Does domain knowledge support these findings?
+
+Yes. Established cybersecurity best practices confirm the importance of several key features:
+
+- **Use of IP addresses in URLs** is a known indicator of phishing.
+- **Short or abnormal URLs**, especially those with many redirects, often signify suspicious behavior.
+- **Lack of HTTPS encryption** is more common in phishing sites.
+- **Excessive subdomains or non-standard ports** can also indicate malicious intent.
+
+These known red flags validate the findings from our unsupervised segmentation and support the robustness of our feature set.
+
+
+### Natural Language Processing (NLP)
+
+The dataset used in this project does **not include any raw textual fields** such as webpage titles, descriptions, or content. Instead, it consists of structured and binary features that describe technical aspects of websites (e.g., use of HTTPS, abnormal redirects, presence of IP addresses in the domain).
+
+As a result, typical NLP tasks are **not applicable** in this case. Specifically, we cannot perform:
+
+- Sentiment Analysis
+- Topic Modeling
+- Writing Style Detection
+
+If future versions of the dataset include textual information (e.g., page content, HTML structure, or user messages), NLP techniques could be leveraged to enhance phishing detection and content classification.
+
+
+
+### Graphs and System Flow Representation
+
+Although the dataset itself is structured as a flat table of features, we explored conceptual diagrams to illustrate the system’s logic and potential weaknesses.
+
+#### 1. Information Flow Diagram (Conceptual)
+
+We designed a high-level flow of how phishing detection could work in a real-world system:
+
+1. **User accesses a website**
+2. → System extracts features (URL structure, HTTPS, redirects, etc.)
+3. → Feature vector is fed into the trained model
+4. → Model predicts: Legitimate ✅ or Phishing ❌
+5. → System blocks access or alerts user (if phishing)
+
+This helps visualize the integration of the machine learning pipeline into a cybersecurity system.
+
+#### 2. Threat Surface Mapping (Optional)
+
+In a more advanced deployment, you could map:
+- **Endpoints at risk** (e.g., browsers on unmanaged machines)
+- **Vulnerable components** (e.g., users clicking shortened links or non-HTTPS sites)
+- **Feature-based threat indicators** (e.g., IP usage, abnormal URLs)
+
+While such mapping was outside the scope of this dataset, it’s conceptually important for identifying real-time points of failure.
+
+#### 3. Correlation Heatmap (Performed)
+
+We created a **correlation heatmap** of all features to visually identify which attributes are strongly related. This revealed, for example, that `UsingPopupWindow` and `Favicon` were highly correlated — leading us to remove one to reduce redundancy.
+
+
+
+5️⃣ Models and Performance
+We trained a Random Forest classifier on the cleaned phishing website dataset to predict whether a website is legitimate (1) or phishing (-1). The model was evaluated on a held-out test set comprising 20% of the data.
+
+Performance Metrics:
+
+Metric	Phishing (-1)	Legitimate (1)	Overall
+Precision	0.97	0.97	—
+Recall	0.96	0.98	—
+F1-score	0.96	0.97	0.97
+Support	967	1223	2190
+Accuracy	—	—	0.97
+
+Accuracy: The model achieved an overall accuracy of 96.9%, indicating it correctly classifies the vast majority of websites.
+
+Precision and Recall: Both classes (phishing and legitimate) have very high precision and recall scores above 0.96, demonstrating the model’s effectiveness in minimizing false positives and false negatives.
+
+F1-score: The harmonic mean of precision and recall confirms strong balance in detection performance for both classes.
+
+Interpretation:
+
+The Random Forest model successfully learns meaningful patterns from the features to discriminate phishing websites from legitimate ones. This is supported by the high metrics across classes and overall
+
+
+## 📊 Reporting
+
+### 🔍 Clear Presentation of Findings
+
+Our analysis reveals distinct and actionable patterns within the phishing website dataset that enable reliable differentiation between legitimate and phishing sites. 
+
+Key observations include:
+
+- **Critical features** such as the use of IP addresses in URLs, presence or absence of HTTPS, and abnormal URL redirects strongly indicate phishing attempts.  
+- The **Random Forest classifier** achieved an impressive accuracy of **96.9%**, with excellent precision and recall across both classes, underscoring the robustness of our feature set and modeling approach.  
+
+These findings demonstrate the effectiveness of the selected features and the potential for practical cybersecurity applications.
+
+---
+
+### 📈 Supporting Visualizations and Tables
+
+To effectively communicate these insights, we utilized a variety of visual tools, including:
+
+- **Class distribution bar charts** to highlight dataset imbalance and its implications.  
+- **Feature presence rate graphs** showing proportions of suspicious attributes.  
+- **Correlation heatmaps** that identified redundant features, leading to a cleaner, more interpretable dataset.  
+- **PCA scatterplots** visualizing natural groupings in the data, reinforcing feature relevance.  
+- **Comprehensive classification reports** detailing precision, recall, F1-score, and overall accuracy metrics.
+
+These visualizations not only enhance interpretability but also validate the strength and reliability of our analytical pipeline.
+
+---
+
+### 🚀 Suggestions for Future Research
+
+Building on the current work, the following avenues offer promising opportunities to advance phishing detection:
+
+- **Temporal Data Integration:** Incorporate time-stamped records to analyze trends, spikes, and seasonal patterns in phishing activities.  
+- **Enhanced Feature Engineering:** Develop additional composite features informed by domain expertise to further boost model performance.  
+- **Natural Language Processing (NLP):** Apply sentiment analysis, topic modeling, or stylistic analysis if textual data such as webpage content becomes available.  
+- **Advanced Modeling Techniques:** Explore deep learning architectures, ensemble methods, or anomaly detection algorithms for improved detection accuracy.  
+- **Real-Time Monitoring Systems:** Design adaptive systems capable of dynamically detecting phishing websites and updating models to counter emerging threats swiftly.
+
+Pursuing these directions will significantly improve the resilience and applicability of phishing detection in real-world cybersecurity environments.
+
+---

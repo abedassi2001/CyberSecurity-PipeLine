@@ -90,17 +90,6 @@ The class distribution is visualized below:
 ![Class Distribution](ClassDistribution.png)
 
 
-## 4️⃣ Exploratory Data Analysis (EDA)
-
-### Visualization
-
-#### Class Distribution
----
-
-*(You can continue the EDA section by adding analyses such as feature presence rates, feature correlation heatmaps, and feature distribution differences between classes.)*
-
----
-
 ### Feature Reduction – Correlated Features Removal
 
 During exploratory analysis, we found that the features **`Favicon`** and **`UsingPopupWindow`** are highly correlated, meaning they provide overlapping information to the model.
@@ -111,8 +100,6 @@ Removing correlated features helps prevent overfitting and reduces noise, improv
 
 The final feature set used for modeling excludes `Favicon` and `UsingPopupWindow`, resulting in a more concise and effective dataset.
 
-![Features Correlation](Correlation-Matrix.png)
----
 ### Outlier Detection
 
 To identify anomalous samples that may distort our model, we used **Isolation Forest**, a robust unsupervised outlier detection algorithm. Based on feature patterns, approximately **1%** of samples were flagged as outliers.
@@ -274,7 +261,8 @@ To effectively communicate these insights, we utilized a variety of visual tools
 - **Correlation heatmaps** that identified redundant features, leading to a cleaner, more interpretable dataset.  
 - **PCA scatterplots** visualizing natural groupings in the data, reinforcing feature relevance.  
 - **Comprehensive classification reports** detailing precision, recall, F1-score, and overall accuracy metrics.
-
+![Clustring](Confusion-Matrix.png)
+![Clustring](Random-Forest.png)
 These visualizations not only enhance interpretability but also validate the strength and reliability of our analytical pipeline.
 
 ---

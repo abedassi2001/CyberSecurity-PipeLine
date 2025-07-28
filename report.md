@@ -101,8 +101,15 @@ The class distribution is visualized below:
 
 ---
 
-### Features Reductiion 
----
-in this step we plot the corrlation matrix and check for features that are correlated so we can get rid of them these features may inbterupt and ruien our classifires 
+### Feature Reduction – Correlated Features Removal
 
+During exploratory analysis, we found that the features **`Favicon`** and **`UsingPopupWindow`** are highly correlated, meaning they provide overlapping information to the model.
+
+To reduce redundancy and simplify the feature set, we removed these two features from the dataset.
+
+Removing correlated features helps prevent overfitting and reduces noise, improving model interpretability and performance.
+
+The final feature set used for modeling excludes `Favicon` and `UsingPopupWindow`, resulting in a more concise and effective dataset.
+
+![Features Correlation](Correlation-Matrix.png)
 ---

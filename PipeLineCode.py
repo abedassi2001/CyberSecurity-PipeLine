@@ -30,8 +30,21 @@ for feature in features_to_plot:
     plt.title(f'Distribution of {feature} by Class')
     plt.show()
 
+# Remove correlated features
+features_to_remove = ['Favicon', 'UsingPopupWindow']
+
+# Drop from dataset (excluding target and index)
+X = df.drop(columns=['class', 'Index'] + features_to_remove)
+
+# Optionally, create a cleaned dataframe including target
+df_cleaned = pd.concat([X, df['class']], axis=1)
+
+print(f"Removed features due to high correlation: {features_to_remove}")
+print(f"Remaining features count: {X.shape[1]}")
+
 # 4. Correlation heatmap
 plt.figure(figsize=(14,12))
 sns.heatmap(df.corr(), cmap='coolwarm', center=0)
 plt.title('Correlation Heatmap')
 plt.show()
+

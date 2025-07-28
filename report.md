@@ -113,3 +113,39 @@ The final feature set used for modeling excludes `Favicon` and `UsingPopupWindow
 
 ![Features Correlation](Correlation-Matrix.png)
 ---
+### Outlier Detection
+
+To identify anomalous samples that may distort our model, we used **Isolation Forest**, a robust unsupervised outlier detection algorithm. Based on feature patterns, approximately **1%** of samples were flagged as outliers.
+
+These samples exhibited combinations of binary features that significantly deviated from the typical behavior of either legitimate or phishing websites.
+
+
+| Metric              | Count |
+|---------------------|-------|
+| Original Samples    | 11,054 |
+| Outliers Removed    | 108    |
+| Final Sample Size   |  10946 |
+
+
+### Pattern Recognition via Clustering
+
+To uncover hidden behavioral patterns in the dataset, we applied **KMeans Clustering** (with 2 clusters) to the feature set.
+
+Although the dataset includes labels (phishing vs legitimate), we used clustering in an unsupervised way to validate whether websites naturally group by behavior.
+
+The data was then reduced to 2D using **PCA (Principal Component Analysis)** for visualization.
+
+**Observation:**
+- The clusters showed partially distinct groupings.
+- This confirms that legitimate and phishing websites often exhibit separable behavior patterns even without supervision.
+
+This kind of pattern recognition helps validate feature quality and can inform the design of anomaly-based detection systems.
+![Clustring](Clustring-PCA.png)
+
+### Time Series Analysis
+
+Time series analysis typically involves examining how data changes over time to identify trends, spikes, or irregularities. This can be particularly valuable for monitoring patterns in phishing activity, such as sudden increases in malicious website reports or seasonal behavior.
+
+However, the dataset used in this project does **not include any time-related feature** (e.g., timestamps or collection dates). As a result, a true time series analysis could not be performed.
+
+In future versions of this dataset, the inclusion of time-based attributes would enable deeper insights into the temporal behavior of phishing threats.
